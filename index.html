@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riya's Boutique</title>
+<meta name="description" content="Ladies fashion – Kurtas, Sarees, Lehengas & more. Fresh arrivals daily.">
+<meta property="og:title" content="Riya's Boutique">
+<meta property="og:description" content="Handpicked ladies fashion delivered to your door.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar" id="announceBar">🚚 Free delivery on orders above ₹999 &nbsp;|&nbsp; 🎀 New arrivals every day!</div>
+
+<!-- NAV -->
+<nav>
+  <div class="brand" onclick="showPage('shop')" id="navBrand">Riya's <span>Boutique</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('shop')">Home</a>
+    <a onclick="selectCategory('kurta')">Kurtas</a>
+    <a onclick="selectCategory('saree')">Sarees</a>
+    <a onclick="selectCategory('lehenga')">Lehengas</a>
+    <a onclick="selectCategory('western')">Western</a>
+    <a onclick="openAdmin()" style="color:var(--accent)">⚙ Admin</a>
+  </div>
+  <div class="nav-right">
+    <button class="user-nav-btn" id="userNavBtn" onclick="showPage('auth')">🔑 Sign In</button>
+    <button class="cart-btn" onclick="toggleCart()">🛍️ Cart <span class="cart-count" id="cartCount">0</span></button>
+    <button class="nav-hamburger" onclick="toggleDrawer()">☰</button>
+  </div>
+</nav>
+<div class="nav-drawer" id="navDrawer">
+  <a onclick="showPage('shop');toggleDrawer()">🏠 Home</a>
+  <a onclick="showPage('auth');toggleDrawer()" id="drawerSignIn">🔑 Sign In / Register</a>
+  <a onclick="selectCategory('kurta');toggleDrawer()">👗 Kurtas</a>
+  <a onclick="selectCategory('saree');toggleDrawer()">🥻 Sarees</a>
+  <a onclick="selectCategory('lehenga');toggleDrawer()">💃 Lehengas</a>
+  <a onclick="selectCategory('western');toggleDrawer()">👚 Western</a>
+  <a onclick="openAdmin();toggleDrawer()" style="color:var(--accent)">⚙ Admin Panel</a>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SHOP PAGE
+═══════════════════════════════════════════ -->
+<div id="shopPage" class="page active">
+  <div class="hero">
+    <div class="hero-eyebrow">✨ Fresh Arrivals Daily</div>
+    <h1>Wear Your <em>Story</em><br>in Every Stitch</h1>
+    <p>Handpicked ladies fashion • Delivered to your door</p>
+    <div class="hero-badges">
+      <span class="hero-badge">👗 Kurtas</span>
+      <span class="hero-badge">🥻 Sarees</span>
+      <span class="hero-badge">💃 Lehengas</span>
+      <span class="hero-badge">🚚 Home Delivery</span>
+    </div>
+    <div class="hero-search">
+      <input type="text" id="searchInput" placeholder="Search kurtas, sarees, lehengas…" oninput="searchProducts(this.value)">
+      <button onclick="searchProducts(document.getElementById('searchInput').value)">Search</button>
+    </div>
+  </div>
+
+  <div class="category-section">
+    <div class="section-heading">Shop by Category</div>
+    <div class="category-grid" id="categoryGrid"></div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-val="all" onclick="filterProducts('all',this)">All</button>
+    <button class="filter-btn" data-val="new" onclick="filterProducts('new',this)">🆕 New</button>
+    <button class="filter-btn" data-val="kurta" onclick="filterProducts('kurta',this)">Kurtas</button>
+    <button class="filter-btn" data-val="saree" onclick="filterProducts('saree',this)">Sarees</button>
+    <button class="filter-btn" data-val="lehenga" onclick="filterProducts('lehenga',this)">Lehengas</button>
+    <button class="filter-btn" data-val="western" onclick="filterProducts('western',this)">Western</button>
+    <button class="filter-btn" data-val="suit" onclick="filterProducts('suit',this)">Suits</button>
+    <button class="filter-btn" data-val="sale" onclick="filterProducts('sale',this)">🔥 Sale</button>
+  </div>
+
+  <div class="shop-section">
+    <div class="shop-header">
+      <div class="section-title" id="sectionTitle">All Products</div>
+      <select class="sort-select" onchange="sortProducts(this.value)">
+        <option value="default">Sort: Default</option>
+        <option value="price_asc">Price: Low → High</option>
+        <option value="price_desc">Price: High → Low</option>
+        <option value="newest">Newest First</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     AUTH PAGE (Sign In / Register)
+═══════════════════════════════════════════ -->
+<div id="authPage" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2>Welcome 👋</h2>
+      <p>Sign in or create an account to track your orders</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" onclick="showAuthTab('login')">Sign In</button>
+        <button class="auth-tab" data-tab="register" onclick="showAuthTab('register')">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <div class="auth-form" id="authLogin">
+        <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="priya@email.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Your password" onkeydown="if(event.key==='Enter')loginBuyer()"></div>
+        <button class="auth-submit-btn" onclick="loginBuyer()">Sign In →</button>
+        <p class="auth-switch">Don't have an account? <a onclick="showAuthTab('register')">Create one</a></p>
+        <div class="auth-divider">or</div>
+        <button style="width:100%;background:none;border:1.5px solid var(--border);padding:.8rem;border-radius:12px;font-size:.88rem;color:#888;" onclick="showPage('shop')">Continue as Guest →</button>
+      </div>
+
+      <!-- Register Form -->
+      <div class="auth-form" id="authRegister" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="Priya Sharma"></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="9876543210"></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="priya@email.com"></div>
+        <div class="form-group"><label>Password (min 6 chars)</label><input type="password" id="regPass" placeholder="Create password" onkeydown="if(event.key==='Enter')registerBuyer()"></div>
+        <button class="auth-submit-btn" onclick="registerBuyer()">Create Account →</button>
+        <p class="auth-switch">Already have an account? <a onclick="showAuthTab('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MY ACCOUNT PAGE
+═══════════════════════════════════════════ -->
+<div id="accountPage" class="page">
+  <div class="account-wrap">
+    <div class="account-header">
+      <div class="account-avatar" id="accountAvatar">P</div>
+      <div>
+        <div class="account-name" id="accountName">My Account</div>
+        <div class="account-email" id="accountEmail"></div>
+      </div>
+      <button onclick="logoutBuyer()" style="margin-left:auto;background:none;border:1.5px solid var(--border);padding:.4rem .9rem;border-radius:20px;font-size:.78rem;color:#888;transition:.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='#888'">Sign Out</button>
+    </div>
+
+    <div class="account-tabs">
+      <button class="account-tab active" onclick="switchAccountTab('orders',this)">📦 My Orders</button>
+      <button class="account-tab" onclick="switchAccountTab('profile',this)">👤 My Profile</button>
+    </div>
+
+    <!-- My Orders -->
+    <div class="account-section active" id="accOrders">
+      <div id="myOrdersList"></div>
+    </div>
+
+    <!-- My Profile -->
+    <div class="account-section" id="accProfile">
+      <div class="form-card">
+        <h3>👤 Edit Profile</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="profileName" placeholder="Your name"></div>
+          <div class="form-group"><label>Phone Number</label><input type="text" id="profilePhone" placeholder="9876543210"></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="profileEmail" placeholder="your@email.com" disabled style="opacity:.6"></div>
+        <div class="form-group"><label>New Password (optional)</label><input type="password" id="profileNewPass" placeholder="Leave blank to keep current"></div>
+        <button class="admin-save-btn" onclick="saveProfile()">💾 Save Profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CHECKOUT PAGE
+═══════════════════════════════════════════ -->
+<div id="checkoutPage" class="page">
+  <div class="checkout-wrap">
+    <h2>Checkout</h2>
+    <div class="checkout-grid">
+      <div>
+        <div class="form-card">
+          <h3>📦 Delivery Details</h3>
+          <div class="autofill-notice" id="autofillNotice" style="display:none">✅ Details auto-filled from your account</div>
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" id="fname" placeholder="Priya"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" id="lname" placeholder="Sharma"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Mobile Number</label><input type="tel" id="mobile" placeholder="+91 98765 43210"></div>
+            <div class="form-group"><label>Email (for order updates)</label><input type="email" id="email" placeholder="priya@email.com"></div>
+          </div>
+          <div class="form-group"><label>Full Address</label><input type="text" id="address" placeholder="House No., Street, Area"></div>
+          <div class="form-row">
+            <div class="form-group"><label>City</label><input type="text" id="city" placeholder="Ahmedabad"></div>
+            <div class="form-group"><label>PIN Code</label><input type="text" id="pin" placeholder="380001"></div>
+          </div>
+          <div class="form-group"><label>State</label>
+            <select id="state">
+              <option>Gujarat</option><option>Maharashtra</option><option>Rajasthan</option><option>Delhi</option>
+              <option>Karnataka</option><option>Tamil Nadu</option><option>Uttar Pradesh</option>
+              <option>West Bengal</option><option>Madhya Pradesh</option><option>Punjab</option>
+              <option>Haryana</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Order Notes (optional)</label>
+            <textarea id="orderNotes" rows="2" placeholder="Special instructions, colour preferences…"></textarea>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>💳 Payment Method</h3>
+          <div class="pay-toggle-row">
+            <div class="pay-toggle active" id="toggleUpi" onclick="selectPayment(this,'upi')">
+              <span class="pay-toggle-icon">📱</span>
+              <div><div class="pay-toggle-title">Pay via UPI</div><div class="pay-toggle-sub">PhonePe · GPay · Paytm · BHIM</div></div>
+              <span class="pay-check" id="checkUpi">✓</span>
+            </div>
+            <div class="pay-toggle" id="toggleCod" onclick="selectPayment(this,'cod')">
+              <span class="pay-toggle-icon">🏠</span>
+              <div><div class="pay-toggle-title">Cash on Delivery</div><div class="pay-toggle-sub">Pay when order arrives</div></div>
+              <span class="pay-check" id="checkCod" style="opacity:0">✓</span>
+            </div>
+          </div>
+          <div id="upiSection">
+            <div class="upi-amount-banner"><div class="upi-amount-label">Total Amount to Pay</div><div class="upi-amount-value" id="upiAmountDisplay">₹0</div></div>
+            <div class="upi-apps-label">Tap to open your UPI app directly:</div>
+            <div class="upi-apps-grid" id="upiAppsGrid"></div>
+            <div class="upi-qr-row">
+              <div class="upi-qr-box"><canvas id="qrCanvas" width="150" height="150"></canvas><div class="upi-qr-label">Scan &amp; Pay</div></div>
+              <div class="upi-manual-box">
+                <div class="upi-manual-label">Or copy UPI ID:</div>
+                <div class="upi-id-chip"><span id="upiIdDisplay">yourname@upi</span><button onclick="copyUpiId()" class="copy-btn">📋 Copy</button></div>
+                <div class="upi-manual-note">Open any UPI app → Send Money → Paste UPI ID → Enter ₹<span id="upiAmountSmall">0</span> → Pay</div>
+              </div>
+            </div>
+            <div class="upi-ss-note">📸 After payment, send screenshot on WhatsApp for quick confirmation.</div>
+          </div>
+          <div id="codSection" style="display:none">
+            <div class="cod-box">
+              <div class="cod-icon">🏠</div>
+              <div class="cod-title">Cash on Delivery</div>
+              <div class="cod-amount">Pay ₹<span id="codAmountDisplay">0</span> at your door</div>
+              <div class="cod-note">No advance needed. Delivery agent will collect at your doorstep.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+          <div id="orderSummaryItems"></div>
+          <hr class="summary-divider">
+          <div class="summary-item"><span>Subtotal</span><span id="summarySubtotal">₹0</span></div>
+          <div class="summary-item"><span>Delivery</span><span id="summaryDelivery" style="color:green">FREE</span></div>
+          <hr class="summary-divider">
+          <div class="summary-total"><span>Total</span><span id="summaryTotal">₹0</span></div>
+          <button class="place-order-btn" onclick="placeOrder()">✅ Place Order</button>
+          <p style="font-size:.7rem;color:#bbb;text-align:center;margin-top:.7rem">Orders confirmed via WhatsApp within 1 hour</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SUCCESS PAGE
+═══════════════════════════════════════════ -->
+<div id="successPage" class="page">
+  <div class="success-page">
+    <div class="check">🎉</div>
+    <h2>Order Placed Successfully!</h2>
+    <p>We'll confirm your order on WhatsApp within 1 hour.</p>
+    <p style="margin-top:.5rem;color:#aaa;font-size:.8rem">Order ID: <strong id="orderId"></strong></p>
+    <div style="margin-top:1.3rem;display:flex;justify-content:center;gap:.7rem;flex-wrap:wrap">
+      <button class="back-shop-btn" onclick="showPage('shop')">Continue Shopping</button>
+      <button class="track-order-btn" onclick="showPage('account')">Track My Order →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PRODUCT MODAL
+═══════════════════════════════════════════ -->
+<div class="overlay" id="productModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img" id="modalImg"></div>
+    <div class="modal-body">
+      <div id="modalBadge"></div>
+      <h2 id="modalName"></h2>
+      <div class="modal-price" id="modalPrice"></div>
+      <p class="modal-desc" id="modalDesc"></p>
+      <div class="size-section"><label>Select Size</label><div class="size-btns" id="modalSizes"></div></div>
+      <div class="qty-row"><label>Quantity</label><div class="qty-ctrl"><button onclick="changeQty(-1)">−</button><span id="modalQty">1</span><button onclick="changeQty(1)">+</button></div></div>
+      <button class="modal-add-btn" onclick="addToCartFromModal()">🛍️ Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ORDER TRACKING MODAL
+═══════════════════════════════════════════ -->
+<div class="overlay order-detail-modal" id="trackingModal">
+  <div class="modal" style="max-width:700px">
+    <button class="modal-close" onclick="document.getElementById('trackingModal').classList.remove('show')">✕</button>
+    <div id="trackingModalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CART SIDEBAR
+═══════════════════════════════════════════ -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header"><h3>Your Cart 🛍️</h3><button class="cart-close" onclick="toggleCart()">✕</button></div>
+  <div class="cart-items" id="cartItems"><p style="text-align:center;color:#bbb;margin-top:3rem;font-size:.85rem">Your cart is empty 🛍️</p></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">₹0</span></div>
+    <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ADMIN PANEL
+═══════════════════════════════════════════ -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-box">
+    <div class="admin-header">
+      <h3>⚙️ Admin Panel</h3>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="admin-body">
+
+      <!-- LOGIN -->
+      <div id="adminLogin">
+        <div style="text-align:center;margin-bottom:1.2rem"><div style="font-size:3rem">🔐</div><p style="color:#888;font-size:.86rem;margin-top:.4rem">Enter admin password</p></div>
+        <div class="form-group"><label>Password</label><input type="password" id="adminPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkAdminLogin()"></div>
+        <button class="admin-save-btn" onclick="checkAdminLogin()">Login to Admin</button>
+        <p style="font-size:.7rem;color:#bbb;text-align:center;margin-top:.45rem">Default: admin123</p>
+      </div>
+
+      <!-- CONTENT -->
+      <div id="adminContent" style="display:none">
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchTab('add',this)">➕ Add</button>
+          <button class="admin-tab" onclick="switchTab('manage',this)">📋 Products</button>
+          <button class="admin-tab" onclick="switchTab('orders',this)">📦 Orders</button>
+          <button class="admin-tab" onclick="switchTab('buyers',this)">👥 Buyers</button>
+          <button class="admin-tab" onclick="switchTab('categories',this)">🗂️ Categories</button>
+          <button class="admin-tab" onclick="switchTab('theme',this)">🎨 Theme</button>
+          <button class="admin-tab" onclick="switchTab('store',this)">🏪 Store</button>
+          <button class="admin-tab" onclick="switchTab('stats',this)">📊 Stats</button>
+          <button class="admin-tab" onclick="switchTab('seo',this)">🌐 SEO</button>
+        </div>
+
+        <!-- ── ADD PRODUCT ── -->
+        <div class="admin-section active" id="adminAdd">
+          <div class="img-upload-area"><input type="file" accept="image/*" onchange="handleImageUpload(event)"><img id="imgPreview" class="img-preview" src="" style="display:none"><p id="uploadText">📷 Click to upload product photo</p><p style="font-size:.7rem;color:#aaa;margin-top:.28rem">JPG, PNG supported</p></div>
+          <div class="form-row">
+            <div class="form-group"><label>Product Name</label><input type="text" id="adminName" placeholder="e.g. Floral Anarkali Kurti"></div>
+            <div class="form-group"><label>Category</label><select id="adminCat"></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Selling Price (₹)</label><input type="number" id="adminPrice" placeholder="999"></div>
+            <div class="form-group"><label>Original Price ₹ (strikethrough)</label><input type="number" id="adminOriginal" placeholder="1499"></div>
+          </div>
+          <div class="form-group"><label>Description / Fabric / Care</label><textarea id="adminDesc" rows="3" placeholder="Fabric, colour, occasion, wash instructions…" style="width:100%;padding:.65rem .95rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.86rem;outline:none;resize:vertical;"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Sizes (comma separated)</label><input type="text" id="adminSizes" placeholder="S, M, L, XL, XXL"></div>
+            <div class="form-group"><label>Badge</label><select id="adminBadge"><option value="">None</option><option value="new">🆕 New</option><option value="sale">🔥 Sale</option><option value="hot">⭐ Hot</option></select></div>
+          </div>
+          <div class="form-group"><label>Stock Quantity</label><input type="number" id="adminStock" placeholder="10"></div>
+          <button class="admin-save-btn" id="saveProductBtn" onclick="saveProduct()">✅ Save Product</button>
+        </div>
+
+        <!-- ── MANAGE PRODUCTS ── -->
+        <div class="admin-section" id="adminManage">
+          <div style="margin-bottom:.75rem"><input type="text" id="adminSearchProd" placeholder="Search products…" oninput="renderAdminList(this.value)" style="width:100%;padding:.52rem .95rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.83rem;outline:none;"></div>
+          <div class="product-list-admin" id="adminProductList"></div>
+        </div>
+
+        <!-- ── ADMIN ORDERS ── -->
+        <div class="admin-section" id="adminOrders">
+          <div class="orders-filter-bar">
+            <button class="order-filter-btn active" data-status="all" onclick="renderAdminOrders('all')">All</button>
+            <button class="order-filter-btn" data-status="pending" onclick="renderAdminOrders('pending')">⏳ Pending</button>
+            <button class="order-filter-btn" data-status="confirmed" onclick="renderAdminOrders('confirmed')">✅ Confirmed</button>
+            <button class="order-filter-btn" data-status="packed" onclick="renderAdminOrders('packed')">📦 Packed</button>
+            <button class="order-filter-btn" data-status="shipped" onclick="renderAdminOrders('shipped')">🚚 Shipped</button>
+            <button class="order-filter-btn" data-status="delivered" onclick="renderAdminOrders('delivered')">🎉 Delivered</button>
+            <button class="order-filter-btn" data-status="cancelled" onclick="renderAdminOrders('cancelled')">❌ Cancelled</button>
+          </div>
+          <div id="adminOrdersList"></div>
+        </div>
+
+        <!-- ── ADMIN BUYERS ── -->
+        <div class="admin-section" id="adminBuyers">
+          <div style="background:var(--light);border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem">
+            <span style="font-size:1.4rem">👥</span>
+            <div><strong id="totalBuyersCount">0</strong> registered buyers</div>
+          </div>
+          <div class="buyers-list" id="adminBuyersList"></div>
+        </div>
+
+        <!-- ── CATEGORIES ── -->
+        <div class="admin-section" id="adminCategories">
+          <p style="font-size:.78rem;color:#888;margin-bottom:.85rem">Manage categories shown on homepage.</p>
+          <div style="display:flex;gap:.45rem;margin-bottom:.9rem;flex-wrap:wrap">
+            <input type="text" id="newCatLabel" placeholder="Name (e.g. Dupatta)" style="flex:1;min-width:95px;padding:.52rem .85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.83rem;outline:none;">
+            <input type="text" id="newCatIcon" placeholder="🎀" style="width:56px;padding:.52rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;text-align:center;outline:none;">
+            <input type="text" id="newCatValue" placeholder="slug" style="width:86px;padding:.52rem .85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.83rem;outline:none;">
+            <button onclick="addCategory()" style="background:var(--primary);color:#fff;border:none;padding:.52rem .95rem;border-radius:var(--radius-sm);font-size:.8rem;cursor:pointer;">➕ Add</button>
+          </div>
+          <div id="adminCatList" style="display:flex;flex-direction:column;gap:.48rem;"></div>
+        </div>
+
+        <!-- ── THEME ── -->
+        <div class="admin-section" id="adminTheme">
+          <p style="font-size:.78rem;color:#888;margin-bottom:.9rem">Choose a preset or build your own theme.</p>
+          <div class="theme-presets" id="themePresets"></div>
+          <div class="color-pickers">
+            <div class="color-picker-item"><label>Primary Colour</label><input type="color" id="cpPrimary" oninput="liveColor('primary',this.value)"></div>
+            <div class="color-picker-item"><label>Accent Colour</label><input type="color" id="cpAccent" oninput="liveColor('accent',this.value)"></div>
+            <div class="color-picker-item"><label>Nav / Footer BG</label><input type="color" id="cpDark" oninput="liveColor('dark',this.value)"></div>
+            <div class="color-picker-item"><label>Page Background</label><input type="color" id="cpLight" oninput="liveColor('light',this.value)"></div>
+          </div>
+          <p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:.55rem">Font Style</p>
+          <div class="font-selector" id="fontSelector"></div>
+          <button class="admin-save-btn" onclick="saveTheme()">💾 Save Theme</button>
+        </div>
+
+        <!-- ── STORE SETTINGS ── -->
+        <div class="admin-section" id="adminStore">
+          <div class="settings-grid">
+            <div class="form-group"><label>Shop Name</label><input type="text" id="sShopName" placeholder="Riya's Boutique"></div>
+            <div class="form-group"><label>Your UPI ID</label><input type="text" id="sUpi" placeholder="yourname@upi"></div>
+            <div class="form-group"><label>WhatsApp Number</label><input type="text" id="sWA" placeholder="919876543210"></div>
+            <div class="form-group"><label>Currency Symbol</label><input type="text" id="sCurrency" placeholder="₹"></div>
+            <div class="form-group"><label>Free Delivery Above (₹)</label><input type="number" id="sFreeDelivery" placeholder="999"></div>
+            <div class="form-group"><label>Delivery Charge (₹)</label><input type="number" id="sDeliveryCharge" placeholder="60"></div>
+            <div class="form-group"><label>Admin Password</label><input type="password" id="sPass" placeholder="Change password"></div>
+            <div class="form-group"><label>Announcement Text</label><input type="text" id="sAnnounce" placeholder="Free delivery on orders above ₹999"></div>
+          </div>
+          <p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:#999;margin:1rem 0 .55rem">Feature Toggles</p>
+          <div class="setting-toggle-row"><div><div class="setting-toggle-label">Announcement Bar</div><div class="setting-toggle-sub">Top promotional banner</div></div><label class="toggle-switch"><input type="checkbox" id="togAnnounce" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-toggle-row"><div><div class="setting-toggle-label">WhatsApp Button</div><div class="setting-toggle-sub">Floating chat button</div></div><label class="toggle-switch"><input type="checkbox" id="togWA" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-toggle-row"><div><div class="setting-toggle-label">Cash on Delivery</div><div class="setting-toggle-sub">Allow COD payments</div></div><label class="toggle-switch"><input type="checkbox" id="togCod" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-toggle-row"><div><div class="setting-toggle-label">Product Reviews</div><div class="setting-toggle-sub">Show star ratings</div></div><label class="toggle-switch"><input type="checkbox" id="togReviews"><span class="toggle-slider"></span></label></div>
+          <button class="admin-save-btn" onclick="saveStoreSettings()">💾 Save Settings</button>
+        </div>
+
+        <!-- ── STATS ── -->
+        <div class="admin-section" id="adminStats">
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="statProducts">0</div><div class="stat-label">Products</div></div>
+            <div class="stat-card"><div class="stat-value" id="statOrders">0</div><div class="stat-label">Orders</div></div>
+            <div class="stat-card"><div class="stat-value" id="statBuyers">0</div><div class="stat-label">Buyers</div></div>
+            <div class="stat-card" style="grid-column:1/-1"><div class="stat-value" id="statRevenue">₹0</div><div class="stat-label">Total Revenue</div></div>
+          </div>
+          <div style="background:#fafafa;border-radius:11px;padding:.95rem;font-size:.83rem;color:#666;margin-bottom:.9rem">
+            <strong style="display:block;margin-bottom:.45rem">📦 Recent Orders</strong>
+            <div id="recentOrders" style="font-size:.78rem;color:#999">No orders yet</div>
+          </div>
+          <button class="admin-save-btn" onclick="exportData()">📥 Export All Data (JSON)</button>
+          <button class="admin-danger-btn" onclick="clearOrders()">🗑️ Clear Order History</button>
+        </div>
+
+        <!-- ── SEO & DEPLOY ── -->
+        <div class="admin-section" id="adminSeo">
+          <div class="form-group"><label>Page Title (Google)</label><input type="text" id="seoTitle" placeholder="Riya's Boutique – Ladies Fashion Online"></div>
+          <div class="form-group"><label>Meta Description</label><textarea id="seoDesc" rows="2" placeholder="Buy kurtas, sarees, lehengas online…" style="width:100%;padding:.65rem .95rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.86rem;outline:none;resize:vertical;"></textarea></div>
+          <div class="form-group"><label>Google Analytics ID</label><input type="text" id="seoGA" placeholder="G-XXXXXXXXXX"></div>
+          <button class="admin-save-btn" onclick="saveSeo()">💾 Save SEO</button>
+          <hr style="margin:1.1rem 0;border:none;border-top:1px solid var(--border)">
+          <p style="font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin-bottom:.75rem">🌐 Go Live Online</p>
+          <a href="https://netlify.com/drop" target="_blank" class="deploy-link" style="border-color:#00c7b7" onmouseover="this.style.background='#e6faf8'" onmouseout="this.style.background=''"><span style="font-size:1.5rem">🟢</span><div><strong>Netlify Drop</strong><span class="deploy-badge" style="background:#00c7b7">FREE</span><div class="deploy-sub">Drag &amp; drop folder → instant live site</div></div></a>
+          <a href="https://tiiny.host" target="_blank" class="deploy-link" style="border-color:#5b5fc7" onmouseover="this.style.background='#f0f0ff'" onmouseout="this.style.background=''"><span style="font-size:1.5rem">⚡</span><div><strong>Tiiny.host</strong><span class="deploy-badge" style="background:#5b5fc7">EASIEST</span><div class="deploy-sub">Upload ZIP → live URL in 30 seconds</div></div></a>
+          <div class="deploy-tip"><strong>📌 Steps:</strong> 1. Download ZIP from Claude &nbsp; 2. Go to netlify.com/drop &nbsp; 3. Drag the <strong>boutique</strong> folder &nbsp; 4. Your site is LIVE worldwide! 🎉</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- WHATSAPP FLOAT -->
+<a class="wa-float" id="waFloat" href="#" target="_blank" title="Chat on WhatsApp">💬</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand" id="footerBrand">Riya's <span>Boutique</span></div>
+      <p class="footer-desc">Handpicked ladies fashion delivered with love. Fresh arrivals every day.</p>
+      <div class="footer-social">
+        <a class="social-btn" id="waFooter" href="#" target="_blank">💬</a>
+        <a class="social-btn" href="#">📸</a>
+        <a class="social-btn" href="#">📘</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a onclick="selectCategory('kurta')">Kurtas</a>
+      <a onclick="selectCategory('saree')">Sarees</a>
+      <a onclick="selectCategory('lehenga')">Lehengas</a>
+      <a onclick="selectCategory('western')">Western Wear</a>
+      <a onclick="filterProducts('sale',null)">Sale</a>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <a onclick="showPage('auth')">Sign In</a>
+      <a onclick="showPage('account')">My Orders</a>
+      <a>Track Order</a>
+      <a>Size Guide</a>
+      <a onclick="openAdmin()" style="color:var(--accent)">Admin Panel</a>
+    </div>
+  </div>
+  <div class="footer-bottom"><p id="footerCopy">© 2025 Riya's Boutique. All rights reserved.</p></div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
